@@ -1,0 +1,18 @@
+create or replace 
+procedure llenar_persona
+is
+cedula integer;
+nombre varchar2(20);
+apellido varchar2(20);
+cursor pers is
+select cedula,nombre,apellido
+from personas;
+begin
+ for i in pers loop
+ cedula:=i.cedula;
+ nombre:=i.nombre;
+ apellido:=i.apellido;   
+ EXIT WHEN pers%NOTFOUND;
+ insert into persona values(seq_persona.nextval,cedula, nombre,apellido);
+ end loop;
+ end;
