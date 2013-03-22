@@ -16,3 +16,22 @@ begin
  insert into persona values(seq_persona.nextval,cedula, nombre,apellido);
  end loop;
  end;
+create or replace PROCEDURE LLENADO_material AS
+v_c_estimada asignarmaterial.aml_cantidadestimada%type;
+v_c_usada asignarmaterial.aml_cantidadusada%type;
+v_nombre_m  sds_materiales_mtl_data_table.mtl_nombre%type;
+contador integer ;
+CURSOR c_mtl_nombre IS (SELECT asm.aml_cantidadestimada,asm.aml_cantidadusada ,mtl.mtl_nombre
+FROM sds_materiales_mtl_data_table mtl join asignarmaterial asm  
+on mtl.mtl_codigo=asm.mtl_codigo);
+BEGIN
+CONTADOR:=0;
+OPEN c_mtl_nombre;
+LOOP
+FETCH c_mtl_nombre INTO v_c_estimada,v_c_usada,v_nombre_m;
+EXIT WHEN c_mtl_nombre%NOTFOUND;
+contador:=contador+1;
+ INSERT INTO material (id_material,cantidad_estimada,cantidad_usada,nombre) VALUES (contador, v_c_estimada,v_c_usada,v_nombre_m);
+END LOOP;
+CLOSE c_mtl_nombre;
+end llenado_material;
