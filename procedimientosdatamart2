@@ -16,6 +16,33 @@ begin
  insert into persona values(seq_persona.nextval,cedula, nombre,apellido);
  end loop;
  end;
+-------------------------------------------------
+Carga inicial de dimensión “servicio”
+
+create or replace 
+procedure llenado_servicio
+is
+contador integer;
+pers_sugerido asig_personal.apl_personalsugerido%type;
+pers_usado asig_personal.apl_personalusado%type;
+nombre servicios.svo_nombre%type;
+cursor c_servicio is
+(select asig.apl_personalsugerido, asig.apl_personalusado,s.svo_nombre 
+from asig_personal asig join servicios s 
+on asig.svo_codigo=s.svo_codigo);
+BEGIN
+CONTADOR:=0;
+OPEN c_servicio;
+LOOP
+FETCH c_servicio INTO pers_sugerido,pers_usado,nombre;
+EXIT WHEN c_servicio%NOTFOUND;
+contador:=contador+1;
+ INSERT INTO servicio(id_servicio,per_sugerido,per_usado,nombre) VALUES (contador,pers_sugerido, pers_usado,nombre);
+END LOOP;
+ CLOSE c_servicio;
+END LLENADO_servicio;
+--------------------------------------------------------
+
 create or replace PROCEDURE LLENADO_material AS
 v_c_estimada asignarmaterial.aml_cantidadestimada%type;
 v_c_usada asignarmaterial.aml_cantidadusada%type;
